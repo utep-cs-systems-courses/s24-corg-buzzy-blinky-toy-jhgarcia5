@@ -26,7 +26,7 @@ int main(void) {
 
 int secondCount = 0;
 int state = 0;
-
+int blinking = 0;
 
 void switch_interrupt_handler()
 {
@@ -43,6 +43,13 @@ void switch_interrupt_handler()
   } else {
     P1OUT = (P1OUT & ~LED_GREEN) | LED_RED;
   }
+
+  if (blinking) {
+    blinking = 0;
+  } else {
+    blinking = 1;
+  }
+  
 }
 
 void __interrupt_vec(PORT1_VECTOR) Port_1(){
@@ -57,6 +64,10 @@ void __interrupt_vec(PORT1_VECTOR) Port_1(){
 void __interrupt_vec(WDT_VECTOR) WDT()
 {
 
+  if (!blinking) {
+    return;
+  }
+  
   secondCount += 1;
   if (secondCount >= 250){
     secondCount = 0;
