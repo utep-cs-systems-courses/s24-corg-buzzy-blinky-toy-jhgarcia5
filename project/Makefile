@@ -1,15 +1,15 @@
 COMMON_OBJECTS = main.o
 CPU = msp430g2553
-CFLAGS = -mmcu=${CPU} -I../h
+CFLAGS = -mmcu=${CPU} -I ./h
 LDFLAGS = -L/opt/ti/msp430_gcc/include
 
 CC = msp430-elf-gcc
 AS = msp430-elf-as
 
-all: lef.elf
+all: led.elf
 
 led.elf: ${COMMON_OBJECTS}
-	${CC} ${CFLAGS} ${LDFLAGS} -o $@ $^ ../lib/libTimer.a
+	${CC} ${CFLAGS} ${LDFLAGS} -o $@ $^ ./lib/libTimer.a
 
 load: led.elf
 	msp430loader.sh led.elf
