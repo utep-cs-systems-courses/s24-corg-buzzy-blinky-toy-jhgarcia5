@@ -6,13 +6,16 @@ LDFLAGS = -L/opt/ti/msp430_gcc/include
 CC = msp430-elf-gcc
 AS = msp430-elf-as
 
-all: led.elf
+all: led.elf button.elf
 
 led.elf: ${COMMON_OBJECTS}
 	${CC} ${CFLAGS} ${LDFLAGS} -o $@ $^ ./lib/libTimer.a
 
-load: led.elf
-	msp430loader.sh led.elf
+button.elf: ${COMMON_OBJECTS} ./lib/libTimer.a
+	${CC} ${CFLAGS} ${LDFLAGS} -o $@ $^
+
+load: led.elf button.elf
+	msp430loader.sh led.elf $^
 
 clean:
 	rm -f *.o *.elf
