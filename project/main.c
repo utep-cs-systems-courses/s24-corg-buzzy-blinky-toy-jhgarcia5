@@ -2,6 +2,10 @@
 #include "libTimer.h"
 #include "led.h"
 
+//#define LED_RED BIT0
+//#define LED_GREEN BIT6
+//#define LEDS (BIT0 | BIT6)
+
 #define SW1 BIT3
 #define SWITCHES SW1
 
@@ -69,7 +73,7 @@ void __interrupt_vec(WDT_VECTOR) WDT()
   }
   
   secondCount += 1;
-  if (secondCount >= 250){
+  if (secondCount >= 50){
     secondCount = 0;
 
     if(state){
