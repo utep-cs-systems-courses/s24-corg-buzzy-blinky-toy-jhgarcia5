@@ -14,7 +14,7 @@ led.elf: ${COMMON_OBJECTS}
 button.elf: ${COMMON_OBJECTS} ./lib/libTimer.a
 	${CC} ${CFLAGS} ${LDFLAGS} -o $@ $^
 
-buzzer.elf: ${COMMON_OBJECTS} buzzer.o buzzerMain.o ./lib/libTimer.a
+buzzer.elf: ${COMMON_OBJECTS} buzzer.o main.o ./lib/libTimer.a
 	${CC} ${CFLAGS} -o $@ $^
 
 load: led.elf button.elf buzzer.elf
