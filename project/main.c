@@ -1,6 +1,7 @@
 #include <msp430.h>
 #include "libTimer.h"
 #include "led.h"
+#include "buzzer.h"
 
 //#define LED_RED BIT0
 //#define LED_GREEN BIT6
@@ -19,6 +20,9 @@ int main(void) {
   configureClocks();
   enableWDTInterrupts();
 
+  //BUZZER
+  buzzer_init();
+  
   //Sets up buttons
   P1REN |= SWITCHES; //resistors for switches
   P1IE |= SWITCHES; //enables interrupts from swicthes
@@ -31,6 +35,7 @@ int main(void) {
 int secondCount = 0;
 int state = 0;
 int blinking = 0;
+int buzzerCount = 0;
 
 void switch_interrupt_handler()
 {
@@ -61,12 +66,19 @@ void __interrupt_vec(PORT1_VECTOR) Port_1(){
   if (P1IFG & SWITCHES){
     P1IFG &= ~SWITCHES;
     switch_interrupt_handler();
+    buzzer_set_period(1000);
   }
 }
 
 
 void __interrupt_vec(WDT_VECTOR) WDT()
 {
+
+  buzzerCount += 1;
+  if (buzzerCount >= 250){
+    buzzerCount = 0;
+    buzzer_set_period(0);
+  }
 
   if (!blinking) {
     return;
