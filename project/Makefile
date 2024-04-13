@@ -15,7 +15,10 @@ button.elf: ${COMMON_OBJECTS} ./lib/libTimer.a
 	${CC} ${CFLAGS} ${LDFLAGS} -o $@ $^
 
 buzzer.elf: ${COMMON_OBJECTS} buzzer.o main.o ./lib/libTimer.a
-	${CC} ${CFLAGS} -o $@ $^
+	${CC} ${CFLAGS} ${LDFLAGS} -o $@ $^
+
+buzzer.o: buzzer.c buzzer.h
+	${CC} ${CFLAGS} -c buzzer.c -o buzzer.o
 
 load: led.elf button.elf buzzer.elf
 	msp430loader.sh led.elf $^
@@ -23,6 +26,6 @@ load: led.elf button.elf buzzer.elf
 clean:
 	rm -f *.o *.elf
 
+buzzer.c: buzzer.h
 main.o: led.h buzzer.h
-buzzer.o: buzzer.h
 wdInterruptHandler.o: led.h
