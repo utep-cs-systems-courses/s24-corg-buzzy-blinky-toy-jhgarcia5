@@ -3,10 +3,6 @@
 #include "led.h"
 #include "buzzer.h"
 
-//#define LED_RED BIT0
-//#define LED_GREEN BIT6
-//#define LEDS (BIT0 | BIT6)
-
 #define SW1 BIT0
 #define SW2 BIT1
 #define SW3 BIT2
@@ -27,10 +23,10 @@ int main(void) {
   //buzzer_init();
   
   //Sets up buttons
-  P1REN |= SWITCHES; //resistors for switches
-  P1IE |= SWITCHES; //enables interrupts from swicthes
-  P1OUT |= SWITCHES; //pull ups for switches
-  P1DIR &= ~SWITCHES;  // set switches bits for input
+  P2REN |= SWITCHES; //resistors for switches
+  P2IE |= SWITCHES; //enables interrupts from swicthes
+  P2OUT |= SWITCHES; //pull ups for switches
+  P2DIR &= ~SWITCHES;  // set switches bits for input
 
   or_sr(0x18);
 }
@@ -42,26 +38,25 @@ int blinking = 0;
 //int buzzerCount = 0;
 
 void switch_interrupt_handler()
-{
-  char p1val = P1IN;
+{  
+  char p2val = P1IN;
 
-  P1IES |= (p1val & SWITCHES);
-  P1IES &= (p1val | ~SWITCHES);
+  P2IES |= (p2val & SWITCHES);
+  P2IES &= (p2val | ~SWITCHES);
 
-  blinking = 1;
-  if (p1val & SW1) {
+  if ((p2val & SW1) == 0) {
     state = 0;
   }
 
-  if (p1val & SW2) {
+  if ((p2val & SW2) == 0) {
     state = 1;
   }
 
-  if (p1val & SW3) {
+  if ((p2val & SW3) == 0) {
     state = 2;
   }
 
-  if (p1val & SW4) {
+  if ((p2val & SW4) == 0) {
     state = 3;
   }
   /*
@@ -81,11 +76,11 @@ void switch_interrupt_handler()
   */
 }
 
-void __interrupt_vec(PORT1_VECTOR) Port_1(){
+void __interrupt_vec(PORT2_VECTOR) Port_2(){
   
-  if (P1IFG & SWITCHES){
+  if (P2IFG & SWITCHES){
+    P2IFG &= ~SWITCHES;
     switch_interrupt_handler();
-    P1IFG &= ~SWITCHES;
     //buzzer_set_period(1000);
   }
 }

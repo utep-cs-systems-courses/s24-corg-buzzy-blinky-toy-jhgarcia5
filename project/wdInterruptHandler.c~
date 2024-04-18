@@ -1,0 +1,21 @@
+#include <msp430.h>
+#include "buzzer.h"
+#include "led.h"
+#include "switches.h"
+
+int state = 0;
+
+void __interrupt_vec(WDT_VECTOR) WDT(){
+
+  static int secondCount = 0;
+  secondCount += 1;
+
+  switch(state){
+
+  case 0:
+    
+
+    
+  }
+  
+}
