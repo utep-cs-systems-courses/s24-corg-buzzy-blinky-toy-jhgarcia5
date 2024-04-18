@@ -39,7 +39,7 @@ int secondCount = 0;
 int state = 0;
 int currLed = 0;
 int blinking = 0;
-int buzzerCount = 0;
+//int buzzerCount = 0;
 
 void switch_interrupt_handler()
 {
@@ -48,25 +48,22 @@ void switch_interrupt_handler()
   P1IES |= (p1val & SWITCHES);
   P1IES &= (p1val | ~SWITCHES);
 
-  if (P1IFG & SW1) {
+  blinking = 1;
+  if (p1val & SW1) {
     state = 0;
-    blinking = 1;
   }
 
-  if (P1IFG & SW2) {
+  if (p1val & SW2) {
     state = 1;
   }
 
-  if (P1IFG & SW3) {
+  if (p1val & SW3) {
     state = 2;
   }
 
-  if (P1IFG & SW4) {
+  if (p1val & SW4) {
     state = 3;
   }
-
-  P1IFG &= ~SWITCHES;
-
   /*
   state ^= 1;
   if(state){
@@ -87,8 +84,8 @@ void switch_interrupt_handler()
 void __interrupt_vec(PORT1_VECTOR) Port_1(){
   
   if (P1IFG & SWITCHES){
-    P1IFG &= ~SWITCHES;
     switch_interrupt_handler();
+    P1IFG &= ~SWITCHES;
     //buzzer_set_period(1000);
   }
 }
@@ -110,19 +107,26 @@ void __interrupt_vec(WDT_VECTOR) WDT()
   
   secondCount += 1;
 
-  if (state == 0) {
+  switch (state){
+  case 0:
+    
+    
     if (secondCount >= 50){
       P1OUT ^= (LED_GREEN | LED_RED);
       secondCount = 0;
     }
+    break;
+
+  case 1:
     
-  } else if (state == 1) {
     if (secondCount >= 100){
       P1OUT ^= (LED_GREEN | LED_RED);
       secondCount = 0;
     }
-    
-  } else if (state == 2) {
+    break;
+
+  case 2:
+   
     if (secondCount >= 50) {
       if (currLed){
 	P1OUT = (P1OUT & ~LED_RED) | LED_GREEN;
@@ -132,6 +136,7 @@ void __interrupt_vec(WDT_VECTOR) WDT()
 	currLed = 1;
       }
     }
+    break;
   }
 
   
