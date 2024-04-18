@@ -39,7 +39,7 @@ int blinking = 0;
 
 void switch_interrupt_handler()
 {  
-  char p2val = P1IN;
+  char p2val = P2IN;
 
   P2IES |= (p2val & SWITCHES);
   P2IES &= (p2val | ~SWITCHES);
@@ -130,6 +130,12 @@ void __interrupt_vec(WDT_VECTOR) WDT()
 	P1OUT = (P1OUT & ~LED_GREEN) | LED_RED;
 	currLed = 1;
       }
+    }
+    break;
+  case 3:
+    if (secondCount >= 25){
+      P1OUT ^= LED_GREEN;
+      secondCount = 0;
     }
     break;
   }
