@@ -1,7 +1,7 @@
 #include <msp430.h>
 #include "libTimer.h"
 #include "led.h"
-#include "buzzer.h"
+//#include "buzzer.h"
 
 #define SW1 BIT0
 #define SW2 BIT1
@@ -30,6 +30,25 @@ int main(void) {
 
   or_sr(0x18);
 }
+
+void buzzer_init(){
+
+  timerAUpmode();
+  P2SEL2 &= ~(BIT6 | BIT7);
+  P2SEL &= ~BIT7;
+  P2SEL |= BIT6;
+  P2DIR = BIT6;
+  
+}
+
+void buzzer_set_period(short cycles){
+
+  CCR0 = cycles;
+  CCR1 = cycles >> 1;
+
+}
+  
+
 
 int secondCount = 0;
 int state = 0;
@@ -75,6 +94,18 @@ void __interrupt_vec(PORT2_VECTOR) Port_2(){
   }
 }
 
+void tunes(state)
+{
+
+  float C4 = 261.61;
+  float D4 = 293.66;
+  float E4 = 329.63;
+  float G4 = 392.00;
+  float A4 = 440.00;
+  float B4 = 493.88;
+  
+}
+
 
 void __interrupt_vec(WDT_VECTOR) WDT()
 {
@@ -95,7 +126,7 @@ void __interrupt_vec(WDT_VECTOR) WDT()
   switch (state){
   case 0:
     
-    
+    buzzer_set_period(100);
     if (secondCount >= 50){
       P1OUT ^= (LED_GREEN | LED_RED);
       secondCount = 0;
@@ -103,7 +134,8 @@ void __interrupt_vec(WDT_VECTOR) WDT()
     break;
 
   case 1:
-    
+
+    buzzer_set_period(200);
     if (secondCount >= 100){
       P1OUT ^= (LED_GREEN | LED_RED);
       secondCount = 0;
@@ -111,7 +143,8 @@ void __interrupt_vec(WDT_VECTOR) WDT()
     break;
 
   case 2:
-   
+
+    buzzer_set_period(300);
     if (secondCount >= 50) {
       if (currLed){
 	P1OUT = (P1OUT & ~LED_RED) | LED_GREEN;
@@ -123,6 +156,8 @@ void __interrupt_vec(WDT_VECTOR) WDT()
     }
     break;
   case 3:
+
+    buzzer_set_period(400);
     if (secondCount >= 25){
       if (redCount <= 10) {
 	P1OUT ^= LED_GREEN;
